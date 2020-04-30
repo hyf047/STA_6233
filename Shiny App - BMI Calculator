@@ -1,0 +1,53 @@
+---
+title: "BMI"
+author: "Yu-Cheng Lin"
+date: "4/30/2020"
+output: html_document
+runtime: shiny
+---
+
+```{r eruptions, echo=FALSE}
+library(shiny)
+
+
+BMI = function(height,weight){
+        return(0.454*weight/(.0254*height)^2)
+  }
+
+server <- shinyServer(
+        function(input, output) {
+                output$oht <- renderPrint({input$ht})
+                output$owt <- renderPrint({input$wt})
+                output$prediction <- renderPrint({BMI(input$ht, input$wt)})
+        }
+)
+
+ui <- shinyUI(pageWithSidebar(
+        headerPanel("BMI Calculator"),
+        sidebarPanel(
+                numericInput('ht', 'Your Height (in inches)', 72, min = 0, max = 1000, step = 1),
+                numericInput('wt', 'Your weight (in pounds)', 180, min = 0, max = 1000, step = 1)
+        ),
+        mainPanel(
+                h3('Here is the results'),
+                h4('Your BMI'),
+                verbatimTextOutput("prediction"),
+                tags$ul(
+        tags$li("Underweight = BMI < 18.5", style="color: red;"),
+        tags$li("Normal weight = 18.5 ~ 24.9 ", style="color: red;"),
+        tags$li("Overweight = 25 ~ 29.9 ", style="color: red;"),
+        tags$li("Obesity = BMI > 30", style="color: red;"),
+                h4('Your height'),
+                verbatimTextOutput("oht"),
+                h4('Your weight'),
+                verbatimTextOutput("owt")
+                )
+        )
+))
+
+
+
+shinyApp(ui = ui, server = server )
+
+
+```
